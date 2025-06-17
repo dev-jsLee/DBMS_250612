@@ -1,0 +1,1 @@
+-- part6_DML_DELETE.sql
