@@ -1,0 +1,80 @@
+-- part2_union.sql
+-- 집합 연산자
+-- 열의 개수와 그 구조가 같은 두 개 테이블을 하나로 병합하거나
+-- 공통된 행, 한쪽이 제외된 행을 추출할 때 사용되는 연산자다.
+-- 1. UNION
+-- 합집합 연산자로 두 개 테이블의 중복된 행은 하나만 결과로 내놓고
+-- 중복되지 않은 나머지 행을 그대로 결과로 내놓는다.
+-- WHERE절에서 사용하는 AND 연산자와 비슷한 효과를 낸다.
+SELECT FIRST_NAME, LAST_NAME, SALARY, COMMISSION_PCT 
+FROM EMPLOYEES
+WHERE COMMISSION_PCT IS NOT NULL
+UNION
+SELECT FIRST_NAME, LAST_NAME, SALARY, COMMISSION_PCT 
+FROM EMPLOYEES
+WHERE SALARY > 5000;
+
+-- 2. INTERSECT
+-- 교집합 연산자로, 중복되는 행만 추출하여 결과행으로 내보낸다.
+-- 두 테이블에서 겹치는 데이터를 확인할 때 유리하다.
+SELECT PLAYER_NAME, WEIGHT, HEIGHT
+FROM PLAYER
+-- 몸무게가 65에서 70 사이인 선수들
+WHERE WEIGHT BETWEEN 65 AND 70
+INTERSECT -- 두 가지 조건을 모두 만족하는 선수들
+SELECT PLAYER_NAME, WEIGHT, HEIGHT
+FROM PLAYER
+-- 키가 175에서 180 사이인 선수들
+WHERE HEIGHT BETWEEN 175 AND 180;
+
+-- 3. MINUS
+-- 차집합에 해당하는 연산자로 먼저 나온 테이블에서
+-- 교집합에 해당하는 행을 제외한 결과를 출력한다.
+-- 두 개 테이블에서 서로 겹치지 않는 한쪽 테이블의 행을
+-- 확인할 때 유용하다.
+
+-- 영어이름이 비어있지 않은 선수들
+CREATE VIEW VIEW_PLAYER_MINUS AS
+SELECT PLAYER_NAME, E_PLAYER_NAME, NICKNAME
+FROM PLAYER
+WHERE E_PLAYER_NAME IS NOT NULL
+MINUS -- 영어이름을 비어있지 않고 닉네임도 비어있지 않은
+-- 닉네임이 비어있는 선수들
+SELECT PLAYER_NAME, E_PLAYER_NAME, NICKNAME
+FROM PLAYER
+WHERE NICKNAME IS NULL;
+
+SELECT PLAYER_NAME, E_PLAYER_NAME, NICKNAME
+FROM PLAYER
+WHERE E_PLAYER_NAME IS NOT NULL
+	AND NICKNAME IS NOT NULL;
+
+CREATE VIEW VIEW_PLAYER_INTERSECT AS
+SELECT PLAYER_NAME, E_PLAYER_NAME, NICKNAME
+FROM PLAYER
+WHERE E_PLAYER_NAME IS NOT NULL
+INTERSECT-- 영어이름을 비어있지 않고 닉네임도 비어있지 않은
+-- 닉네임이 비어있는 선수들
+SELECT PLAYER_NAME, E_PLAYER_NAME, NICKNAME
+FROM PLAYER
+WHERE NICKNAME IS NULL;
+
+-- 차집합 테이블과 교집합 테이블을 UNION 하면
+-- 왼쪽 테이블을 온전히 반환한다.(200ROWS)
+SELECT *
+FROM VIEW_PLAYER_MINUS
+UNION 
+SELECT *
+FROM VIEW_PLAYER_INTERSECT;
+
+-- 조건식만 넣은 왼쪽 테이블(200ROWS)
+SELECT PLAYER_NAME, E_PLAYER_NAME, NICKNAME
+FROM PLAYER
+WHERE E_PLAYER_NAME IS NOT NULL;
+
+
+
+
+
+
+

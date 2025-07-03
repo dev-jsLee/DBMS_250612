@@ -43,13 +43,48 @@ ON E.DEPARTMENT_ID = D.DEPARTMENT_ID;
 -- 주로 양쪽 테이블의 관계를 확인하면서도 빈 값을 식별하는 용도로 쓰인다.
 -- 두 데이터테이블(데이터셋) 간의 불일치를 찾거나 완전한 뷰를 얻고자 할 때
 -- 특히 유용하다.
+
+SELECT T.TEAM_NAME, S.STADIUM_NAME
+FROM TEAM T
+FULL OUTER JOIN STADIUM S
+ON T.TEAM_ID = S.HOMETEAM_ID;
+--ON T.STADIUM_ID = S.STADIUM_ID;
+
+-- CROSS JOIN
+-- 자주 사용되는 조인 방식은 아니다.
+-- 가능한 모든 조합을 생성하는 특별한 조인 방식이다.
+-- 실제로 데이터 상에 존재하지 않는 조합도 만들어버리기 때문에
+-- 가상의 데이터, 테스트용 데이터, 학습용 데이터셋 등을 만들 때
+-- 사용한다.
+-- 조건을 필요로 하는 방식이 아니기 때문에 ON과 조건식을 쓰지 않는다.
+
+-- AI 학습을 위해서 실제로 존재하지 않지만 가능한 조합들에 대해서
+-- 학습용 데이터셋을 만들기 위해 사용되곤 한다.
+SELECT E1.FIRST_NAME, E2.LAST_NAME
+FROM EMPLOYEES E1
+CROSS JOIN EMPLOYEES E2;
+
+-- 셀프 JOIN
+-- 자기자신 테이블과 JOIN을 통해서 계층 구조를 표현할 때
+-- 사용되는 조인 방식이다.
+-- 특별히 특정 키워드를 사용하는 것은 아니지만,
+-- 자기자신 테이블과 조합을 한다는 부분에서 하나의 방식으로 취급한다.
+SELECT E.EMPLOYEE_ID, E.FIRST_NAME,
+	E2.EMPLOYEE_ID, E2.FIRST_NAME
+FROM EMPLOYEES E
+JOIN EMPLOYEES E2
+ON E.MANAGER_ID = E2.EMPLOYEE_ID
+ORDER BY E.EMPLOYEE_ID;
+-- E 테이블의 매니저ID가 E2테이블의 직원ID와 같으면
+-- 하나의 테이블로 병합해 보여줘.
+
 SELECT *
 FROM STADIUM;
 SELECT *
 FROM TEAM;
 
-INSERT INTO TEAM(TEAM_ID, REGION_NAME, STADIUM_ID)
-VALUES('K99', '');
+--INSERT INTO TEAM(TEAM_ID, REGION_NAME, TEAM_NAME, STADIUM_ID)
+--VALUES('K99', '독도', '독도팀', 'F01');
 
 
 
